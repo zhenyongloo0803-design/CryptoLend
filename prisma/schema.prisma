@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model BorrowTransaction {
+  id               Int      @id @default(autoincrement())
+  walletAddress    String
+  collateralAmount String
+  borrowAmount     String
+  txHash           String   @unique
+  createdAt        DateTime @default(now())
+}
+
+model StakingTransaction {
+  id            Int      @id @default(autoincrement())
+  walletAddress String
+  action        String
+  amount        String
+  rewardAmount  String
+  txHash        String   @unique
+  createdAt     DateTime @default(now())
+}

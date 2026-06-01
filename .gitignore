@@ -1,0 +1,14 @@
+node_modules
+.next
+.appdata
+.localappdata
+.roamingappdata
+artifacts
+cache
+coverage
+typechain-types
+.env
+*.db
+*.db-journal
+*.log
+prisma/dev.db

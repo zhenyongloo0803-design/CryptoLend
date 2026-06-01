@@ -1,0 +1,43 @@
+{
+  "name": "cryptolend-borrow-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:clean": "node scripts/clean-next-cache.js && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "hardhat:node": "set \"APPDATA=%CD%\\.roamingappdata\" && set \"LOCALAPPDATA=%CD%\\.localappdata\" && hardhat node",
+    "hardhat:compile": "set \"APPDATA=%CD%\\.roamingappdata\" && set \"LOCALAPPDATA=%CD%\\.localappdata\" && hardhat compile",
+    "hardhat:test": "set \"APPDATA=%CD%\\.roamingappdata\" && set \"LOCALAPPDATA=%CD%\\.localappdata\" && hardhat test",
+    "deploy:local": "set \"APPDATA=%CD%\\.roamingappdata\" && set \"LOCALAPPDATA=%CD%\\.localappdata\" && hardhat run scripts/deploy.js --network localhost",
+    "db:push": "set \"APPDATA=%CD%\\.roamingappdata\" && set \"LOCALAPPDATA=%CD%\\.localappdata\" && set \"CHECKPOINT_DISABLE=1\" && prisma db push",
+    "db:studio": "set \"APPDATA=%CD%\\.roamingappdata\" && set \"LOCALAPPDATA=%CD%\\.localappdata\" && set \"CHECKPOINT_DISABLE=1\" && prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.10.0",
+    "ethers": "^6.13.5",
+    "lucide-react": "^0.468.0",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "autoprefixer": "^10.4.20",
+    "chai": "^4.5.0",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "^15.1.0",
+    "hardhat": "^2.22.17",
+    "postcss": "^8.4.49",
+    "prisma": "^6.10.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  }
+}
