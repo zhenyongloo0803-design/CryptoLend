@@ -1,4 +1,4 @@
-# CryptoLend Borrow MVP
+# CryptoLend 
 
 CryptoLend is a blockchain lending demo for the CT124-3-3-BCD assignment. It uses Next.js for the frontend, Prisma + SQLite for local database history, Hardhat for the local blockchain, and Solidity smart contracts for MockUSDT lending.
 
