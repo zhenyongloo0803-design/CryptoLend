@@ -1,70 +1,71 @@
-# CryptoLend Borrow MVP
+# CryptoLend
 
-CryptoLend is a blockchain lending demo for the CT124-3-3-BCD assignment. It uses Next.js for the frontend, Prisma + SQLite for local database history, Hardhat for the local blockchain, and Solidity smart contracts for MockUSDT lending.
+CryptoLend is a blockchain lending and staking demo for the CT124-3-3-BCD assignment. It uses Next.js for the frontend, Prisma + SQLite for local database history, Hardhat for the local blockchain, and Solidity smart contracts for the lending/staking protocol.
 
 ## Features
 
 - Connect MetaMask wallet.
-- Show SepoliaETH collateral only when the connected wallet has ETH balance.
-- Calculate collateral value using `1 SepoliaETH = 100 MockUSDT`.
-- Apply `70%` max LTV before allowing borrow.
-- Borrow MockUSDT by sending ETH collateral to the LendingPool contract.
-- Stake MockUSDT into the protocol and claim demo staking rewards.
-- Unstake MockUSDT principal back to the investor wallet.
-- Store successful borrow records in a local SQLite database.
-- Store staking, unstaking, and reward claim records in a local SQLite database.
+- Strategy home page with Lending and Staking.
+- Supported collateral search for `ETH`, `BTC`, and `Solana`.
+- Show supported collateral only when the connected wallet has a positive demo balance.
+- Fetch live display prices from CoinGecko with demo fallback prices.
+- Borrow USDT using ETH, BTC, or Solana collateral.
+- Track loan principal, accrued interest, and total debt.
+- Repay USDT loans and withdraw collateral after full repayment.
+- Stake USDT into the protocol and claim demo rewards.
+- Unstake USDT principal and rewards.
+- Treasury-only Add Liquidity panel for the company wallet.
+- Store borrow and staking history in SQLite.
+
+## Demo Token Mapping
+
+The UI displays realistic names, but the assets are local Hardhat demo assets:
+
+- `ETH` = Hardhat local test ETH
+- `USDT` = MockUSDT ERC20
+- `BTC` = MockBTC ERC20
+- `Solana` = MockSOL ERC20 on the EVM, not real Solana SPL
+
+CoinGecko prices are used for frontend display. The contract uses deterministic demo prices for local-chain validation so transactions remain stable during presentation.
 
 ## Demo Account Flow
 
-- Account 1 is the deployer, treasury, and initial liquidity provider.
-- Account 2 can be the borrower or staking investor.
-- The pool is funded with MockUSDT during deployment.
-- When Account 2 borrows, ETH moves from Account 2 to the LendingPool contract and MockUSDT moves from the LendingPool contract to Account 2.
-- When Account 2 stakes, MockUSDT moves from Account 2 to the LendingPool contract and rewards can later be claimed from the pool reserve.
+- Account 1 is the deployer, treasury, and company liquidity provider.
+- Demo user accounts can borrow or stake.
+- Demo users receive `10000 USDT`, `1 BTC`, and `100 Solana` during deployment.
+- The LendingPool is pre-funded with ETH and USDT liquidity.
+- Borrowing moves collateral from the user wallet to the LendingPool and moves USDT from the LendingPool to the user wallet.
+- Borrowed USDT accrues demo interest at `4% APY`.
+- Repayment moves USDT from the user wallet back to the LendingPool.
+- Collateral can be withdrawn only after the loan is fully repaid.
+- Staking moves USDT from the investor wallet to the LendingPool and allows rewards to be claimed later.
 
 ## Setup
 
-Install dependencies:
-
 ```bash
 npm install
-```
-
-Create local environment:
-
-```bash
 copy .env.example .env
+npm.cmd run db:push
+npm.cmd run hardhat:compile
+npm.cmd run hardhat:test
 ```
 
-Prepare SQLite database:
+Start local blockchain:
 
 ```bash
-npm run db:push
+npm.cmd run hardhat:node
 ```
 
-Compile and test contracts:
+Deploy contracts in another terminal:
 
 ```bash
-npm run hardhat:compile
-npm run hardhat:test
+npm.cmd run deploy:local
 ```
 
-Start a local Hardhat blockchain:
+Start frontend:
 
 ```bash
-npm run hardhat:node
-```
-
-In another terminal, deploy contracts:
-
-```bash
-npm run deploy:local
-```
-
-Start the frontend:
-
-```bash
-npm run dev
+npm.cmd run dev:clean
 ```
 
 Open:
@@ -82,56 +83,46 @@ Add or switch to the Hardhat local network:
 - Chain ID: `31337`
 - Currency symbol: `ETH`
 
-Import the private key for Account 2 from the `npm run hardhat:node` terminal output. Use Account 2 as the borrower wallet.
+Import demo accounts from the `npm.cmd run hardhat:node` terminal output. Import demo tokens using the latest addresses in `src/lib/deployment.json`:
 
-After deployment, import MockUSDT into MetaMask before the demo:
+- `mockUsdt` as symbol `USDT`, decimals `6`
+- `mockBtc` as symbol `BTC`, decimals `8`
+- `mockSol` as symbol `SOL`, decimals `9`
 
-- Token contract address: copy `mockUsdt` from `src/lib/deployment.json`
-- Symbol: `mUSDT`
-- Decimals: `6`
+If Hardhat node is restarted, redeploy and re-import the latest token addresses.
 
-This simulates a real user wallet that already displays ETH and USDT before using the lending platform.
+## Company Liquidity
 
-Demo borrower accounts receive `10000 mUSDT` during deployment so the wallet looks pre-funded before borrowing.
-The LendingPool contract is also pre-funded with `1000 ETH` and `1000 mUSDT` during deployment for demonstration liquidity.
-
-## Important Smart Contract Constants
-
-- `PRICE_USDT_PER_ETH = 100`
-- `MAX_LTV_BPS = 7000`
-- `INTEREST_BPS = 400`
-- `STAKING_APY_BPS = 1200`
-- `USDT_DECIMALS = 6`
-
-Example:
-
-- Collateral: `0.01 ETH`
-- Collateral value: `1.00 MockUSDT`
-- Max borrow at 70% LTV: `0.70 MockUSDT`
+Connect with the deployer account to reveal the company-only Add Liquidity panel. The treasury can approve USDT and add it into the LendingPool. Normal user wallets do not see this panel.
 
 ## Validation Rules
 
-The frontend checks user input before sending transactions:
+The frontend checks:
 
 - collateral amount must be greater than `0`
-- collateral amount cannot exceed wallet ETH balance after a gas buffer
+- collateral amount cannot exceed wallet balance
+- ETH collateral keeps a gas buffer
+- ERC20 collateral requires approval before borrowing
 - borrow amount must be greater than `0`
-- borrow amount cannot exceed 70% LTV
-- borrow amount cannot exceed pool mUSDT liquidity
+- borrow amount cannot exceed LTV
+- borrow amount cannot exceed pool USDT liquidity
 - stake amount must be greater than `0`
-- stake amount cannot exceed wallet mUSDT balance
-- users must approve mUSDT before staking
+- stake amount cannot exceed wallet USDT balance
+- USDT must be approved before staking or adding liquidity
+- repay amount must cover accrued interest before reducing principal
+- repay amount cannot exceed the current total debt
+- collateral withdrawal is allowed only after the loan is fully repaid
 
-The Solidity contract also validates LTV, liquidity, ERC20 balances, allowances, and staking balances.
+The Solidity contract also validates LTV, liquidity, balances, allowances, accrued loan interest, repayment, collateral withdrawal, staking balances, and treasury-only liquidity funding.
 
 ## PDF Requirement Checklist
 
 - Frontend: Next.js + React
 - Local database: Prisma + SQLite for borrow and staking history
 - Local blockchain: Hardhat Node
-- Smart contracts: Solidity `MockUSDT` and `LendingPool`
+- Smart contracts: Solidity `MockUSDT`, `MockToken`, and `LendingPool`
 - Frontend to smart contract connection: ethers.js + MetaMask
-- Documentation: setup, features, deploy flow, MetaMask setup, demo flow
+- Documentation: setup, features, deployment flow, MetaMask setup, and demo flow
 
 ## Submission Notes
 

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-contract MockUSDT {
-    string public name = "USDT";
-    string public symbol = "USDT";
-    uint8 public constant decimals = 6;
+contract MockToken {
+    string public name;
+    string public symbol;
+    uint8 public immutable decimals;
     uint256 public totalSupply;
     address public owner;
 
@@ -19,7 +19,10 @@ contract MockUSDT {
         _;
     }
 
-    constructor() {
+    constructor(string memory tokenName, string memory tokenSymbol, uint8 tokenDecimals) {
+        name = tokenName;
+        symbol = tokenSymbol;
+        decimals = tokenDecimals;
         owner = msg.sender;
     }
 

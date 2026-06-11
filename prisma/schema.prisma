@@ -10,6 +10,7 @@ datasource db {
 model BorrowTransaction {
   id               Int      @id @default(autoincrement())
   walletAddress    String
+  collateralSymbol String   @default("ETH")
   collateralAmount String
   borrowAmount     String
   txHash           String   @unique
@@ -22,6 +23,16 @@ model StakingTransaction {
   action        String
   amount        String
   rewardAmount  String
+  txHash        String   @unique
+  createdAt     DateTime @default(now())
+}
+
+model RepayTransaction {
+  id            Int      @id @default(autoincrement())
+  walletAddress String
+  amount        String
+  interestPaid  String
+  principalPaid String
   txHash        String   @unique
   createdAt     DateTime @default(now())
 }

@@ -15,7 +15,43 @@
     "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720"
   ],
   "mockUsdt": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-  "lendingPool": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  "mockBtc": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+  "mockSol": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+  "lendingPool": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  "assets": [
+    {
+      "id": "ETH",
+      "name": "ETH",
+      "symbol": "ETH",
+      "coingeckoId": "ethereum",
+      "type": "native",
+      "decimals": 18,
+      "ltvBps": 7000,
+      "fallbackPrice": "100"
+    },
+    {
+      "id": "BTC",
+      "name": "BTC",
+      "symbol": "BTC",
+      "coingeckoId": "bitcoin",
+      "type": "erc20",
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "decimals": 8,
+      "ltvBps": 7000,
+      "fallbackPrice": "65000"
+    },
+    {
+      "id": "SOL",
+      "name": "Solana",
+      "symbol": "SOL",
+      "coingeckoId": "solana",
+      "type": "erc20",
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "decimals": 9,
+      "ltvBps": 6500,
+      "fallbackPrice": "150"
+    }
+  ],
   "constants": {
     "ethPriceUsdt": "100",
     "maxLtvBps": "7000",

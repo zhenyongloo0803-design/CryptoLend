@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const wallet = searchParams.get("wallet");
 
-  const history = await prisma.stakingTransaction.findMany({
+  const history = await prisma.repayTransaction.findMany({
     where: wallet ? { walletAddress: wallet } : undefined,
     orderBy: { createdAt: "desc" },
     take: 20
@@ -17,21 +17,21 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { walletAddress, action, amount, rewardAmount, txHash } = body;
+  const { walletAddress, amount, interestPaid = "0", principalPaid = "0", txHash } = body;
 
-  if (!walletAddress || !action || !amount || rewardAmount === undefined || !txHash) {
-    return NextResponse.json({ message: "Missing staking history fields" }, { status: 400 });
+  if (!walletAddress || !amount || !txHash) {
+    return NextResponse.json({ message: "Missing repay history fields" }, { status: 400 });
   }
 
   const prisma = getPrisma();
-  const record = await prisma.stakingTransaction.upsert({
+  const record = await prisma.repayTransaction.upsert({
     where: { txHash },
     update: {},
     create: {
       walletAddress,
-      action,
       amount,
-      rewardAmount,
+      interestPaid,
+      principalPaid,
       txHash
     }
   });
